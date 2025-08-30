@@ -97,14 +97,29 @@
             line-height: 1.5;
         }
         .added {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: #e6f7ff; /* Light Blue */
+            color: #005f8d;
             text-decoration: none;
         }
         .removed {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: #fffbe6; /* Light Yellow */
+            color: #8d6e00;
             text-decoration: line-through;
+        }
+        #legend {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            font-size: 0.9rem;
+        }
+        #legend span {
+            padding: 2px 6px;
+            border-radius: 4px;
         }
     </style>
 </head>
@@ -129,6 +144,12 @@
     </div>
 
     <div id="stats"></div>
+
+    <div id="legend">
+        <strong>Keterangan:</strong>
+        <span class="added">Teks ditambahkan</span>
+        <span class="removed">Teks dihapus</span>
+    </div>
 
     <h2>Hasil Perbedaan</h2>
     <div id="result"></div>
