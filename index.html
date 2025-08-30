@@ -41,6 +41,22 @@
             box-sizing: border-box;
             resize: vertical;
         }
+        #mode-selector {
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background-color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        #mode-selector label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
         .button-group {
             display: flex;
             gap: 1rem;
@@ -75,12 +91,27 @@
             text-align: center;
         }
         #stats .added-stat {
-            color: #155724;
+            color: #005f8d;
             font-weight: bold;
         }
         #stats .removed-stat {
-            color: #721c24;
+            color: #8d6e00;
             font-weight: bold;
+        }
+        #legend {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            font-size: 0.9rem;
+        }
+        #legend span {
+            padding: 2px 6px;
+            border-radius: 4px;
         }
         #result {
             width: 90%;
@@ -106,21 +137,6 @@
             color: #8d6e00;
             text-decoration: line-through;
         }
-        #legend {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-top: 2rem;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #fff;
-            font-size: 0.9rem;
-        }
-        #legend span {
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
     </style>
 </head>
 <body>
@@ -136,6 +152,13 @@
             <h2>Teks Perubahan</h2>
             <textarea id="text2" placeholder="Masukkan teks kedua di sini..."></textarea>
         </div>
+    </div>
+
+    <div id="mode-selector">
+        <strong>Mode:</strong>
+        <label><input type="radio" name="diffMode" value="chars" checked> Karakter</label>
+        <label><input type="radio" name="diffMode" value="words"> Kata</label>
+        <label><input type="radio" name="diffMode" value="lines"> Baris</label>
     </div>
 
     <div class="button-group">
@@ -187,13 +210,27 @@
 
                 const text1 = text1El.value;
                 const text2 = text2El.value;
+                const diffMode = document.querySelector('input[name="diffMode"]:checked').value;
                 
                 // Clear previous results and reset style
                 resultDiv.innerHTML = '';
                 resultDiv.style.color = '';
                 statsDiv.innerHTML = '';
 
-                const diff = Diff.diffChars(text1, text2);
+                let diff;
+                switch (diffMode) {
+                    case 'words':
+                        diff = Diff.diffWordsWithSpace(text1, text2);
+                        break;
+                    case 'lines':
+                        diff = Diff.diffLines(text1, text2);
+                        break;
+                    case 'chars':
+                    default:
+                        diff = Diff.diffChars(text1, text2);
+                        break;
+                }
+
                 const fragment = document.createDocumentFragment();
                 let addedChars = 0;
                 let removedChars = 0;
