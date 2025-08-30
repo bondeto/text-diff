@@ -41,8 +41,12 @@
             box-sizing: border-box;
             resize: vertical;
         }
-        button {
+        .button-group {
+            display: flex;
+            gap: 1rem;
             margin-top: 1.5rem;
+        }
+        button {
             padding: 12px 24px;
             border: none;
             background-color: #3498db;
@@ -56,10 +60,32 @@
         button:hover {
             background-color: #2980b9;
         }
+        button.secondary {
+            background-color: #95a5a6;
+        }
+        button.secondary:hover {
+            background-color: #7f8c8d;
+        }
+        #stats {
+            width: 90%;
+            max-width: 1200px;
+            margin-top: 1.5rem;
+            font-size: 1rem;
+            color: #555;
+            text-align: center;
+        }
+        #stats .added-stat {
+            color: #155724;
+            font-weight: bold;
+        }
+        #stats .removed-stat {
+            color: #721c24;
+            font-weight: bold;
+        }
         #result {
             width: 90%;
             max-width: 1200px;
-            margin-top: 2rem;
+            margin-top: 1rem;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 8px;
@@ -97,7 +123,12 @@
         </div>
     </div>
 
-    <button id="compareBtn">Bandingkan Teks</button>
+    <div class="button-group">
+        <button id="compareBtn">Bandingkan Teks</button>
+        <button id="clearBtn" class="secondary">Hapus</button>
+    </div>
+
+    <div id="stats"></div>
 
     <h2>Hasil Perbedaan</h2>
     <div id="result"></div>
@@ -105,10 +136,24 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const compareBtn = document.getElementById('compareBtn');
+            const clearBtn = document.getElementById('clearBtn');
             const resultDiv = document.getElementById('result');
+            const statsDiv = document.getElementById('stats');
+            const text1El = document.getElementById('text1');
+            const text2El = document.getElementById('text2');
 
             if (compareBtn) {
                 compareBtn.addEventListener('click', compareText);
+            }
+            if (clearBtn) {
+                clearBtn.addEventListener('click', clearAll);
+            }
+
+            function clearAll() {
+                text1El.value = '';
+                text2El.value = '';
+                resultDiv.innerHTML = '';
+                statsDiv.innerHTML = '';
             }
 
             function compareText() {
@@ -119,15 +164,18 @@
                     return;
                 }
 
-                const text1 = document.getElementById('text1').value;
-                const text2 = document.getElementById('text2').value;
+                const text1 = text1El.value;
+                const text2 = text2El.value;
                 
                 // Clear previous results and reset style
                 resultDiv.innerHTML = '';
                 resultDiv.style.color = '';
+                statsDiv.innerHTML = '';
 
                 const diff = Diff.diffChars(text1, text2);
                 const fragment = document.createDocumentFragment();
+                let addedChars = 0;
+                let removedChars = 0;
 
                 diff.forEach((part) => {
                     const span = document.createElement('span');
@@ -135,9 +183,22 @@
                                     part.removed ? 'removed' : '';
                     span.appendChild(document.createTextNode(part.value));
                     fragment.appendChild(span);
+
+                    if (part.added) {
+                        addedChars += part.value.length;
+                    } else if (part.removed) {
+                        removedChars += part.value.length;
+                    }
                 });
 
                 resultDiv.appendChild(fragment);
+
+                if (addedChars > 0 || removedChars > 0) {
+                    statsDiv.innerHTML = `
+                        <span class="added-stat">+${addedChars} karakter ditambahkan</span> | 
+                        <span class="removed-stat">-${removedChars} karakter dihapus</span>
+                    `;
+                }
             }
         });
     </script>
